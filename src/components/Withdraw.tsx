@@ -1,4 +1,4 @@
-import { AnchorProvider, Program, utils, web3 } from '@project-serum/anchor';
+import { AnchorProvider, BN, Program, web3 } from '@project-serum/anchor';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { FC } from 'react';
@@ -8,7 +8,11 @@ const idl_string = JSON.stringify(idl);
 const idl_object = JSON.parse(idl_string);
 const programID = new PublicKey(idl.metadata.address)
 
-export const Bank: FC = () => {
+interface WithdrawProps {
+    bankPublicKey: PublicKey;
+}
+
+export const Withdraw: FC<WithdrawProps> = ({ bankPublicKey }) => {
     const wallet = useWallet();
     const { connection } = useConnection();
 
@@ -17,16 +21,12 @@ export const Bank: FC = () => {
         return provider
     }
 
-    const createBank = async () => {
+    const withdrawFromBank = async (bankPublicKey) => {
         try {
-            console.log(programID.toString())
             const provider = getProvider()
             const program = new Program(idl_object, programID, provider)
 
-            const [bank] = await PublicKey.findProgramAddressSync([utils.bytes.utf8.encode("bankaccount"), provider.wallet.publicKey.toBuffer()], programID)
-            console.log(bank.toString())
-            await program.rpc.create("WSoS", { accounts: {bank, user: provider.wallet.publicKey, systemProgram: web3.SystemProgram.programId}})
-            console.log(`Bank ${bank.toString()} was created!`)
+            await program.rpc.withdraw(new BN(0.1 * web3.LAMPORTS_PER_SOL), { accounts: {bankPublicKey, user: provider.wallet.publicKey}})
         } catch (error) {
             console.error(error)
         }
@@ -39,13 +39,13 @@ export const Bank: FC = () => {
                 rounded-lg blur opacity-20 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <button
                     className="group w-60 m-2 btn animate-pulse bg-gradient-to-br from-indigo-500 to-fuchsia-500 hover:from-white hover:to-purple-300 text-black"
-                    onClick={createBank} disabled={!wallet.publicKey}
+                    onClick={withdrawFromBank} disabled={!wallet.publicKey}
                 >
                     <div className="hidden group-disabled:block">
                         Wallet not connected
                     </div>
                     <span className="block group-disabled:hidden" > 
-                        Create bank
+                        Withdraw 0.1 SOL from bank
                     </span>
                 </button>
             </div>

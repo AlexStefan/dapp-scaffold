@@ -1,4 +1,5 @@
 
+import { Banks } from "components/Banks";
 import { FC } from "react";
 import { Bank } from '../../components/Bank';
 
@@ -13,6 +14,7 @@ export const BasicsView: FC = ({ }) => {
         {/* CONTENT GOES HERE */}
         <div className="text-center">
           <Bank />
+          <Banks />
         </div>
       </div>
     </div>
