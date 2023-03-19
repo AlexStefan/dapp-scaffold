@@ -19,12 +19,10 @@ export const Bank: FC = () => {
 
     const createBank = async () => {
         try {
-            console.log(programID.toString())
             const provider = getProvider()
             const program = new Program(idl_object, programID, provider)
 
             const [bank] = await PublicKey.findProgramAddressSync([utils.bytes.utf8.encode("bankaccount"), provider.wallet.publicKey.toBuffer()], programID)
-            console.log(bank.toString())
             await program.rpc.create("WSoS", { accounts: {bank, user: provider.wallet.publicKey, systemProgram: web3.SystemProgram.programId}})
             console.log(`Bank ${bank.toString()} was created!`)
         } catch (error) {
