@@ -25,8 +25,7 @@ export const Withdraw: FC<WithdrawProps> = ({ bankPublicKey }) => {
         try {
             const provider = getProvider()
             const program = new Program(idl_object, programID, provider)
-
-            await program.rpc.withdraw(new BN(0.1 * web3.LAMPORTS_PER_SOL), { accounts: {bankPublicKey, user: provider.wallet.publicKey}})
+            await program.rpc.withdraw(new BN(0.1 * web3.LAMPORTS_PER_SOL), { accounts: {bank: bankPublicKey, user: provider.wallet.publicKey}})
         } catch (error) {
             console.error(error)
         }
@@ -39,7 +38,7 @@ export const Withdraw: FC<WithdrawProps> = ({ bankPublicKey }) => {
                 rounded-lg blur opacity-20 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <button
                     className="group w-60 m-2 btn animate-pulse bg-gradient-to-br from-indigo-500 to-fuchsia-500 hover:from-white hover:to-purple-300 text-black"
-                    onClick={withdrawFromBank} disabled={!wallet.publicKey}
+                    onClick={() => withdrawFromBank(bankPublicKey)} disabled={!wallet.publicKey}
                 >
                     <div className="hidden group-disabled:block">
                         Wallet not connected

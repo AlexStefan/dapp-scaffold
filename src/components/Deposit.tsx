@@ -1,7 +1,7 @@
 import { AnchorProvider, BN, Program, web3 } from '@project-serum/anchor';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import idl from 'solanapdas.json';
 
 const idl_string = JSON.stringify(idl);
@@ -25,8 +25,7 @@ export const Deposit: FC<DepositProps> = ({ bankPublicKey }: DepositProps) => {
         try {
             const provider = getProvider()
             const program = new Program(idl_object, programID, provider)
-            console.log(bankPublicKey)
-            await program.rpc.deposit(new BN(0.1 * web3.LAMPORTS_PER_SOL), { accounts: {bankPublicKey, user: provider.wallet.publicKey, systemProgram: web3.SystemProgram.programId}})
+            await program.rpc.deposit(new BN(0.1 * web3.LAMPORTS_PER_SOL), { accounts: {bank: bankPublicKey, user: provider.wallet.publicKey, systemProgram: web3.SystemProgram.programId}})
         } catch (error) {
             console.error(error)
         }
@@ -39,7 +38,7 @@ export const Deposit: FC<DepositProps> = ({ bankPublicKey }: DepositProps) => {
                 rounded-lg blur opacity-20 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <button
                     className="group w-60 m-2 btn animate-pulse bg-gradient-to-br from-indigo-500 to-fuchsia-500 hover:from-white hover:to-purple-300 text-black"
-                    onClick={depositToBank} disabled={!wallet.publicKey}
+                    onClick={() => depositToBank(bankPublicKey)} disabled={!wallet.publicKey}
                 >
                     <div className="hidden group-disabled:block">
                         Wallet not connected

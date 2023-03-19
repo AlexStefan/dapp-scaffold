@@ -27,6 +27,7 @@ export const Banks: FC = () => {
             const program = new Program(idl_object, programID, provider)
 
             Promise.all((await connection.getProgramAccounts(programID)).map(async bank => ({
+                pubkey: bank.pubkey,
                 ...(await program.account.bank.fetch(bank.pubkey))
             }))).then(banks => {
                 console.log(banks)
